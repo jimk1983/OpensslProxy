@@ -2,8 +2,11 @@
 //
 
 #include "stdafx.h"
+#include <WinSock2.h>
+#include <Windows.h>
 #include <openssl\ssl.h>
 
+#pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "libssl.lib")
 #pragma comment(lib, "libcrypto.lib")
 
@@ -33,11 +36,11 @@ int main()
 	}
 
 	/* SSL ø‚≥ı ºªØ*/
-	SSL_library_init();
+	//SSL_library_init();
 	SSLeay_add_ssl_algorithms();
-	OpenSSL_add_all_algorithms();
-	SSL_load_error_strings();
-	ERR_load_BIO_strings();
+	//OpenSSL_add_all_algorithms();
+	//SSL_load_error_strings();
+	//ERR_load_BIO_strings();
 
 	pstSSlCtx = SSL_CTX_new(TLSv1_2_server_method());
 	if (NULL == pstSSlCtx)
