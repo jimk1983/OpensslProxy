@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <Ws2tcpip.h>
 #include <openssl\ssl.h>
+#include <openssl\err.h>  
 
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "libssl.lib")
@@ -14,7 +15,7 @@
 #define		MAXBUFSIZE		2048
 #define		IPADDRLEN		32
 
-void DisplayPeerCertInfo(SSL * ssl)
+void DisplayPeerSslInfo(SSL * ssl)
 {
 	X509	*cert;
 	char		*line;
@@ -24,15 +25,21 @@ void DisplayPeerCertInfo(SSL * ssl)
 		printf("数字证书信息:\n");
 		line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
 		printf("证书: %s\n", line);
-		free(line);
+		//free(line);
 		line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
 		printf("颁发者: %s\n", line);
-		free(line);
+		//free(line);
 		X509_free(cert);
 	}
 	else
 		printf("无证书信息！\n");
+
+	printf("OpenSSL1.1.1 info:\n");
+	printf("SSL CipherName    =[%s]\n", SSL_get_cipher_name(ssl));
+	printf("SSL VersionName   =[%s]\n", SSL_get_version(ssl));
+
 }
+
 
 int main(int argc, char *argv[])
 {
@@ -136,7 +143,7 @@ int main(int argc, char *argv[])
 		const char* p1 = SSL_state_string(pstSSL);
 	}
 
-	DisplayPeerCertInfo(pstSSL);
+	DisplayPeerSslInfo(pstSSL);
 
 	//释放资源
 	memset(acBuf, 0, MAXBUFSIZE);
@@ -176,6 +183,7 @@ int main(int argc, char *argv[])
 			printf("[SSL-Client]: Error-->SSL write  error=%d\n", iError2);
 			break;
 		}
+		Sleep(1000);
 	}
 	
 	system("pause");

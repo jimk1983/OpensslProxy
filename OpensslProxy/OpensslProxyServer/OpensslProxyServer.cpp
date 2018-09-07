@@ -17,6 +17,9 @@
 #define		IPADDRLEN			32
 
 
+#define		SERVERCERTFILE		".\\cacert.pem"
+#define		SERVERKEYFILE			".\\privkey.pem"
+
 int main(int argc, char *argv[])
 {
 	WSADATA     wsaData;
@@ -118,11 +121,11 @@ int main(int argc, char *argv[])
 		goto ErrorExit;
 	}
 
-	if (SSL_CTX_use_certificate_file(pstSSlCtx, argv[4], SSL_FILETYPE_PEM) <= 0) {
+	if (SSL_CTX_use_certificate_file(pstSSlCtx, SERVERCERTFILE, SSL_FILETYPE_PEM) <= 0) {
 		ERR_print_errors_fp(stdout);
 		goto ErrorExit;
 	}
-	if (SSL_CTX_use_PrivateKey_file(pstSSlCtx, argv[5], SSL_FILETYPE_PEM) <= 0) {
+	if (SSL_CTX_use_PrivateKey_file(pstSSlCtx, SERVERKEYFILE, SSL_FILETYPE_PEM) <= 0) {
 		ERR_print_errors_fp(stdout);
 		goto ErrorExit;
 	}
