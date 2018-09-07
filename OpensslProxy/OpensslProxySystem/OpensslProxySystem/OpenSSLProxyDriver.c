@@ -20,29 +20,6 @@
 #include "OpenSSLProxyCallout.h"
 #include "OpenSSLProxyDriver.h"
 
-// 
-// Callout and sublayer GUIDs
-//
-
-//1e818ad3-e247-4cc5-af81-f215c301fb96
-DEFINE_GUID(
-	OPENSSLPROXY_SUBLAYER,
-	0x1e818ad3,
-	0xe247,
-	0x4cc5,
-	0xaf, 0x81, 0xf2, 0x15, 0xc3, 0x01, 0xfb, 0x96
-);
-
-//connection redirectID
-//22b026f1-42ac-4f4b-9ccb-b4bc11cbf29f
-DEFINE_GUID(
-	OPENSSLPROXY_CONNECTION_REDIRECTED_CALLOUT_V4,
-	0x22b026f1,
-	0x42ac,
-	0x4f4b,
-	0x9c, 0xcb, 0xb4, 0xbc, 0x11, 0xcb, 0xf2, 0x9f
-);
-
 BOOLEAN					gDriverUnloading = FALSE;
 PDEVICE_OBJECT			gDeviceObject;
 HANDLE						gEngineHandle;
@@ -113,11 +90,25 @@ NTSTATUS DriverEntry(
 	pDevExt->pDevice = gDeviceObject;
 	pDevExt->ustrDeviceName = DeviceName;
 	pDevExt->ustrSymLinkName = DeviceSymLinkName;
+	
+	status = OpenSSLProxy_RegisterCallouts(gDeviceObject);
+	if (!NT_SUCCESS(status))
+	{
+		KdPrint(("[OPENSSLDRV]: #DriverEntry#-->OpenSSLProxy_RegisterCallouts error=%08x\n", status));
+		IoDeleteSymbolicLink(&DeviceSymLinkName);
+		IoDeleteDevice(gDeviceObject);
+		gDeviceObject = NULL;
+		return status;
+	}
 
+	for ( int i = 0; i < IRP_MJ_MAXIMUM_FUNCTION; i++)
+	{
+		driverObject->MajorFunction[i] = DriverCompeleteRequest;
+	}
 
-
-
+	driverObject->MajorFunction[IRP_MJ_CREATE] = DriverCreate;
 	driverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = DriverControl;
+
 	driverObject->DriverUnload = DriverUnload;
 	KdPrint(("[OPENSSLDRV]: #DriverEntry#-->DriverLoad successful!\n", status));
 	UNREFERENCED_PARAMETER(registryPath);

@@ -35,8 +35,41 @@ NTSTATUS DriverControl(
 
 
 
-
-
 	UNREFERENCED_PARAMETER(DeviceObject);
 	return Status;
+}
+
+
+NTSTATUS DriverCompeleteRequest(
+	__in PDEVICE_OBJECT DeviceObject,
+	__in PIRP p_IRP)
+{
+	UNREFERENCED_PARAMETER(DeviceObject);
+
+	PAGED_CODE();
+
+	p_IRP->IoStatus.Status					= STATUS_SUCCESS;
+	p_IRP->IoStatus.Information		= 0;
+
+	IoCompleteRequest(p_IRP, IO_NO_INCREMENT);
+
+	UNREFERENCED_PARAMETER(DeviceObject);
+	return STATUS_SUCCESS;
+}
+
+NTSTATUS DriverCreate(
+	__in PDEVICE_OBJECT DeviceObject,
+	__in PIRP p_IRP)
+{
+	UNREFERENCED_PARAMETER(DeviceObject);
+
+	PAGED_CODE();
+
+	p_IRP->IoStatus.Status = STATUS_SUCCESS;
+	p_IRP->IoStatus.Information = FILE_OPENED;
+
+	IoCompleteRequest(p_IRP, IO_NO_INCREMENT);
+
+	UNREFERENCED_PARAMETER(DeviceObject);
+	return STATUS_SUCCESS;
 }
