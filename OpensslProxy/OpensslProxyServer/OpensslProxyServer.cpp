@@ -9,6 +9,7 @@
 #include <openssl/err.h>  
 
 #pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "Crypt32.lib")
 #pragma comment(lib, "libssl.lib")
 #pragma comment(lib, "libcrypto.lib")
 
