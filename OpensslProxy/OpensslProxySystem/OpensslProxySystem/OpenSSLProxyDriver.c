@@ -21,6 +21,7 @@
 #include "OpenSSLProxyDriver.h"
 
 BOOLEAN					gDriverUnloading = FALSE;
+BOOLEAN					gConnectionRedirectEnable = FALSE;
 PDEVICE_OBJECT			gDeviceObject;
 HANDLE						gEngineHandle;
 
@@ -30,6 +31,8 @@ VOID DriverUnload(
 )
 {
 	PDEVICE_EXTENSION		pDevExt;
+
+	OpenSSLProxy_UnRegisterCallouts();
 
 	if (NULL != gDeviceObject)
 	{
@@ -106,8 +109,8 @@ NTSTATUS DriverEntry(
 		driverObject->MajorFunction[i] = DriverCompeleteRequest;
 	}
 
-	driverObject->MajorFunction[IRP_MJ_CREATE] = DriverCreate;
-	driverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = DriverControl;
+	driverObject->MajorFunction[IRP_MJ_CREATE]						= DriverCreate;
+	driverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL]	= DriverControl;
 
 	driverObject->DriverUnload = DriverUnload;
 	KdPrint(("[OPENSSLDRV]: #DriverEntry#-->DriverLoad successful!\n", status));

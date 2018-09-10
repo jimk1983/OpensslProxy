@@ -25,9 +25,13 @@ DEFINE_GUID(
 extern BOOLEAN						gDriverUnloading;
 extern PDEVICE_OBJECT			gDeviceObject;
 extern HANDLE						gEngineHandle;
+extern BOOLEAN						gConnectionRedirectEnable;
+extern HANDLE						g_hRedirectHandle;
 
 NTSTATUS OpenSSLProxy_RegisterCallouts(
 	IN void* deviceObject);
+
+VOID OpenSSLProxy_UnRegisterCallouts();
 
 NTSTATUS DriverCreate(
 	__in PDEVICE_OBJECT DeviceObject,

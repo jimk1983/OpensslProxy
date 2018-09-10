@@ -19,8 +19,60 @@
 #include "OpenSSLProxyKernel.h"
 #include "OpenSSLProxyCallout.h"
 #include "OpenSSLProxyDriver.h"
+#include "OpenSSLProxyDevControl.h"
 
 
+NTSTATUS DeviceIoControl(
+	__in_bcount_opt(InputBufferLength) PVOID InputBuffer,
+	__in ULONG InputBufferLength,
+	__out_bcount_opt(OutputBufferLength) PVOID OutputBuffer,
+	__in ULONG OutputBufferLength,
+	__in ULONG IoControlCode,
+	__inout PIO_STATUS_BLOCK IoStatus
+)
+{
+	NTSTATUS		Status = STATUS_SUCCESS;
+
+	ASSERT(IoStatus != NULL);
+	IoStatus->Status = Status;
+	IoStatus->Information = 0;
+
+	switch (IoControlCode)
+	{
+		case DEVICE_IOCTL_MATCHENABLE:
+			gConnectionRedirectEnable = TRUE;
+			KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device ioctl match Enable!\n"));
+			break;
+		case DEVICE_IOCTL_MATCHDISABLE:
+			gConnectionRedirectEnable = FALSE;
+			KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device ioctl match Disable!\n"));
+			break;
+		case DEVICE_IOCTL_SETLOCALPROXY:
+			{
+				PDEVICE_IOCTL_SETPROXYINFO LocalProxyInfo = (PDEVICE_IOCTL_SETPROXYINFO)InputBuffer;
+
+				if ( InputBuffer == NULL
+					|| InputBufferLength <= sizeof(DEVICE_IOCTL_SETPROXYINFO))
+				{
+					IoStatus->Status = STATUS_INVALID_PARAMETER;
+					break;
+				}
+				else
+				{
+					KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device set proxy info , Pid=%d, Port=%d!\n", LocalProxyInfo->uiPID, LocalProxyInfo->uiTcpPort));
+				}
+			}
+			break;
+		default:
+			IoStatus->Status = STATUS_INVALID_PARAMETER;
+			break;
+	}
+
+	UNREFERENCED_PARAMETER(OutputBuffer);
+	UNREFERENCED_PARAMETER(OutputBufferLength);
+
+	return IoStatus->Status;
+}
 
 NTSTATUS DriverControl(
 	__in PDEVICE_OBJECT DeviceObject,
@@ -30,11 +82,35 @@ NTSTATUS DriverControl(
 	NTSTATUS					 Status = STATUS_SUCCESS;
 
 	l_IrpSp		= IoGetCurrentIrpStackLocation(p_IRP);
-	p_IRP->IoStatus.Status = STATUS_SUCCESS;
-	p_IRP->IoStatus.Information = 0;
+	
+	if ( DeviceObject == gDeviceObject )
+	{
+		p_IRP->IoStatus.Status = STATUS_SUCCESS;
+		p_IRP->IoStatus.Information = 0;
 
+		//也可以做为Dispatch函数进行处理
+		switch (l_IrpSp->MajorFunction)
+		{
+			case IRP_MJ_DEVICE_CONTROL:
 
+				Status = DeviceIoControl(p_IRP->AssociatedIrp.SystemBuffer,
+					l_IrpSp->Parameters.DeviceIoControl.InputBufferLength,
+					p_IRP->AssociatedIrp.SystemBuffer,
+					l_IrpSp->Parameters.DeviceIoControl.OutputBufferLength,
+					l_IrpSp->Parameters.DeviceIoControl.IoControlCode,
+					&p_IRP->IoStatus);
+				break;
+			default:
+				break;
+		}
+	}
+	else
+	{
+		KdPrint(("[OPENSSLDRV]: #DriverControl#-->Not our device!\n"));
+	}
 
+	p_IRP->IoStatus.Status = Status;
+	IoCompleteRequest(p_IRP, IO_NO_INCREMENT);
 	UNREFERENCED_PARAMETER(DeviceObject);
 	return Status;
 }
