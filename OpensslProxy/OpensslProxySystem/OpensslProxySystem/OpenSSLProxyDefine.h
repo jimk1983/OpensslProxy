@@ -25,6 +25,9 @@
 #define			OPENSSLPROXYDOSDRV				L"\\??\\OpenSSLProxyDriver"
 
 
+#define			OPENSSLPROXY_MEM_TAG						'10PS'
+#define			OPENSSLPROXY_RULE_TAG						'20PS'
+
 typedef struct _DEVICE_EXTENSION
 {
 	PDEVICE_OBJECT  pDevice;

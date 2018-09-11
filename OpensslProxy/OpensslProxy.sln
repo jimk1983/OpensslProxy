@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2003
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpensslProxyClient", "OpensslProxyClient\OpensslProxyClient.vcxproj", "{6AB76DB7-711E-47D6-968E-E27366BC2EB6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpensslProxyServer", "OpensslProxyServer\OpensslProxyServer.vcxproj", "{75229DA7-28AF-4D7B-A486-29FBFEDB6BE1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpensslProxySystem", "OpensslProxySystem\OpensslProxySystem\OpensslProxySystem.vcxproj", "{8705C719-F012-485F-97B6-5E933480D2F0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpensslProxyLocal", "OpensslProxyLocal\OpensslProxyLocal.vcxproj", "{93E04704-A340-4C95-BD90-63D6EA07516C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpensslProxyDrvCtrl", "OpensslProxyDrvCtrl\OpensslProxyDrvCtrl.vcxproj", "{13016632-EC5E-46E4-9B70-1948B387E8BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +73,30 @@ Global
 		{8705C719-F012-485F-97B6-5E933480D2F0}.Release|x86.ActiveCfg = Release|Win32
 		{8705C719-F012-485F-97B6-5E933480D2F0}.Release|x86.Build.0 = Release|Win32
 		{8705C719-F012-485F-97B6-5E933480D2F0}.Release|x86.Deploy.0 = Release|Win32
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Debug|ARM.ActiveCfg = Debug|Win32
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Debug|ARM64.ActiveCfg = Debug|Win32
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Debug|x64.ActiveCfg = Debug|x64
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Debug|x64.Build.0 = Debug|x64
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Debug|x86.ActiveCfg = Debug|Win32
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Debug|x86.Build.0 = Debug|Win32
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Release|ARM.ActiveCfg = Release|Win32
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Release|ARM64.ActiveCfg = Release|Win32
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Release|x64.ActiveCfg = Release|x64
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Release|x64.Build.0 = Release|x64
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Release|x86.ActiveCfg = Release|Win32
+		{93E04704-A340-4C95-BD90-63D6EA07516C}.Release|x86.Build.0 = Release|Win32
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Debug|ARM.ActiveCfg = Debug|Win32
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Debug|ARM64.ActiveCfg = Debug|Win32
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Debug|x64.ActiveCfg = Debug|x64
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Debug|x64.Build.0 = Debug|x64
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Debug|x86.ActiveCfg = Debug|Win32
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Debug|x86.Build.0 = Debug|Win32
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Release|ARM.ActiveCfg = Release|Win32
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Release|ARM64.ActiveCfg = Release|Win32
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Release|x64.ActiveCfg = Release|x64
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Release|x64.Build.0 = Release|x64
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Release|x86.ActiveCfg = Release|Win32
+		{13016632-EC5E-46E4-9B70-1948B387E8BF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

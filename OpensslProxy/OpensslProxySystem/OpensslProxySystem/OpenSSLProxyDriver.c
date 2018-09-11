@@ -19,6 +19,7 @@
 #include "OpenSSLProxyKernel.h"
 #include "OpenSSLProxyCallout.h"
 #include "OpenSSLProxyDriver.h"
+#include "OpenSSLProxyEnvInit.h"
 
 BOOLEAN					gDriverUnloading = FALSE;
 BOOLEAN					gConnectionRedirectEnable = FALSE;
@@ -31,6 +32,8 @@ VOID DriverUnload(
 )
 {
 	PDEVICE_EXTENSION		pDevExt;
+
+	OpenSSLProxy_EnvUnInit();
 
 	OpenSSLProxy_UnRegisterCallouts();
 
@@ -94,10 +97,21 @@ NTSTATUS DriverEntry(
 	pDevExt->ustrDeviceName = DeviceName;
 	pDevExt->ustrSymLinkName = DeviceSymLinkName;
 	
+
+	if (STATUS_SUCCESS != OpenSSLProxy_EnvInit())
+	{
+		KdPrint(("[OPENSSLDRV]: #DriverEntry#-->OpenSSLProxy EnvInit error=%08x\n", status));
+		IoDeleteSymbolicLink(&DeviceSymLinkName);
+		IoDeleteDevice(gDeviceObject);
+		gDeviceObject = NULL;
+		return status;
+	}
+
 	status = OpenSSLProxy_RegisterCallouts(gDeviceObject);
 	if (!NT_SUCCESS(status))
 	{
-		KdPrint(("[OPENSSLDRV]: #DriverEntry#-->OpenSSLProxy_RegisterCallouts error=%08x\n", status));
+		KdPrint(("[OPENSSLDRV]: #DriverEntry#-->OpenSSLProxy RegisterCallouts error=%08x\n", status));
+		OpenSSLProxy_EnvUnInit();
 		IoDeleteSymbolicLink(&DeviceSymLinkName);
 		IoDeleteDevice(gDeviceObject);
 		gDeviceObject = NULL;

@@ -164,13 +164,18 @@
     <ClInclude Include="OpenSSLProxyDefine.h" />
     <ClInclude Include="OpenSSLProxyDevControl.h" />
     <ClInclude Include="OpenSSLProxyDriver.h" />
+    <ClInclude Include="OpenSSLProxyEnvInit.h" />
     <ClInclude Include="OpenSSLProxyKernel.h" />
+    <ClInclude Include="OpenSSLProxyRule.h" />
+    <ClInclude Include="OpenSSLProxyUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OpenSSLProxyCallout.c" />
     <ClCompile Include="OpenSSLProxyDevControl.c" />
     <ClCompile Include="OpenSSLProxyDriver.c" />
+    <ClCompile Include="OpenSSLProxyEnvInit.c" />
     <ClCompile Include="OpenSSLProxyRule.c" />
+    <ClCompile Include="OpenSSLProxyUtils.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

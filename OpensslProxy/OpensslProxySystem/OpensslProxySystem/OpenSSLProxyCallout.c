@@ -20,7 +20,9 @@
 #include "OpenSSLProxyKernel.h"
 #include "OpenSSLProxyCallout.h"
 #include "OpenSSLProxyDriver.h"
+#include "OpenSSLProxyUtils.h"
 #include "OpenSSLProxyRule.h"
+#include "OpenSSLProxyEnvInit.h"
 
 
 UINT32					g_uiConnectRedirectCalloutIdV4 = 0;
@@ -44,7 +46,7 @@ VOID OpenSSLProxy_ConnectionRedirectClassify(
 #if(NTDDI_VERSION >= NTDDI_WIN8)
 	SOCKADDR_STORAGE* pSockAddrStorage = NULL;
 #endif
-	FWP_BYTE_BLOB *pstProcInfo = inMetaValues->processPath;;
+	//FWP_BYTE_BLOB *pstProcInfo = inMetaValues->processPath;
 	ULONG		ProcessID = (ULONG)inMetaValues->processId;
 	UINT8			Protocol = inFixedValues->incomingValue[FWPS_FIELD_ALE_CONNECT_REDIRECT_V4_IP_PROTOCOL].value.uint8;
 	UINT32		remoteipaddr = 0;
@@ -163,10 +165,10 @@ VOID OpenSSLProxy_ConnectionRedirectClassify(
 			ProcessID, pstProcInfo->size, pstProcInfo->data));
 	}*/
 	
-	if ( FALSE == g_uiConnectRedirectCalloutIdV4 )
+	if ( TRUE == OpenSSLProxy_RuleIsMatch(remoteipaddr, remotePort) )
 	{
-		KdPrint(("[OPENSSLDRV]: #ConnectionRedirectClassify#-->Ale Redirect connection Rule is Match! [pto=%d] %08x:%d --> %08x:%d\n",
-			Protocol, ntohl(localipaddr), ntohs(localport), ntohl(remoteipaddr), ntohs(remotePort)));
+		KdPrint(("[OPENSSLDRV]: #ConnectionRedirectClassify#-->Ale Redirect connection Rule is Match! [pto=%d] %08x:%d --> %08x:%d,PID=%d\n",
+			Protocol, ntohl(localipaddr), ntohs(localport), ntohl(remoteipaddr), ntohs(remotePort), ProcessID));
 
 		if (INETADDR_ISANY((PSOCKADDR)&(pConnectRequest->localAddressAndPort)))
 		{
@@ -178,7 +180,7 @@ VOID OpenSSLProxy_ConnectionRedirectClassify(
 				INETADDR_ADDRESS((PSOCKADDR)&(pConnectRequest->localAddressAndPort)));
 		}
 
-		//INETADDR_SET_ADDRESS((PSOCKADDR)&(pConnectRequest->remoteAddressAndPort), (CHAR *)&gLocalSockaddr);
+		INETADDR_SET_ADDRESS((PSOCKADDR)&(pConnectRequest->remoteAddressAndPort), (const UCHAR *)OpenSSLProxy_GetLocalSockaddr());
 		//INETADDR_SET_PORT((PSOCKADDR)&(pConnectRequest->remoteAddressAndPort), RegEditGetTcpLocalPort());
 		//pConnectRequest->localRedirectTargetPID = RegEditGetLocalServerPID();
 	}
@@ -245,10 +247,10 @@ NTSTATUS OpenSSLProxy_ConnectRedirectAddFilter(
 )
 {
 	NTSTATUS status = STATUS_SUCCESS;
-
 	FWPM_FILTER filter = { 0 };
 	FWPM_FILTER_CONDITION filterConditions[3] = { 0 };
 	UINT conditionIndex;
+	UINT64  _64 = 0xFFFFFFFFFFFFFFFF;
 
 	filter.layerKey = *layerKey;
 	filter.displayData.name = (wchar_t*)filterName;
@@ -257,8 +259,10 @@ NTSTATUS OpenSSLProxy_ConnectRedirectAddFilter(
 	filter.action.calloutKey = *calloutKey;
 	filter.filterCondition = filterConditions;
 	filter.subLayerKey = OPENSSLPROXY_SUBLAYER;
-	filter.weight.type = FWP_EMPTY;
 	filter.rawContext = context;
+
+	//filter.weight.type = FWP_UINT64;
+	filter.weight.uint64 = &_64;
 
 	conditionIndex = 0;
 
