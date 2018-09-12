@@ -129,6 +129,19 @@
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\CLog.h" />
+    <ClInclude Include="..\common\CrashDump.h" />
+    <ClInclude Include="DevControlDefine.h" />
+    <ClInclude Include="DeviceIoCtrl.h" />
+    <ClInclude Include="DrvCtrlApi.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\CLog.cpp" />
+    <ClCompile Include="..\common\CrashDump.cpp" />
+    <ClCompile Include="DeviceIoCtrl.cpp" />
+    <ClCompile Include="DrvCtrlApi.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

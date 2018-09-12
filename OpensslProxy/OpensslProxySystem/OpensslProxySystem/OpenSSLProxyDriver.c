@@ -96,7 +96,6 @@ NTSTATUS DriverEntry(
 	pDevExt->ustrDeviceName = DeviceName;
 	pDevExt->ustrSymLinkName = DeviceSymLinkName;
 	
-
 	if (STATUS_SUCCESS != OpenSSLProxy_EnvInit())
 	{
 		KdPrint(("[OPENSSLDRV]: #DriverEntry#-->OpenSSLProxy EnvInit error=%08x\n", status));
