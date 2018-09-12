@@ -20,7 +20,9 @@
 #include "OpenSSLProxyCallout.h"
 #include "OpenSSLProxyDriver.h"
 #include "OpenSSLProxyDevControl.h"
-
+#include "OpenSSLProxyUtils.h"
+#include "OpenSSLProxyRule.h"
+#include "OpenSSLProxyEnvInit.h"
 
 NTSTATUS DeviceIoControl(
 	__in_bcount_opt(InputBufferLength) PVOID InputBuffer,
@@ -40,31 +42,142 @@ NTSTATUS DeviceIoControl(
 	switch (IoControlCode)
 	{
 		case DEVICE_IOCTL_MATCHENABLE:
-			gConnectionRedirectEnable = TRUE;
-			KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device ioctl match Enable!\n"));
+				gConnectionRedirectEnable = TRUE;
+				KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device ioctl match Enable!\n"));
 			break;
 		case DEVICE_IOCTL_MATCHDISABLE:
-			gConnectionRedirectEnable = FALSE;
-			KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device ioctl match Disable!\n"));
+				gConnectionRedirectEnable = FALSE;
+				KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device ioctl match Disable!\n"));
 			break;
-		case DEVICE_IOCTL_SETLOCALPROXY:
+		case DEVICE_IOCTL_SETRULECLEAR:
+				OpenSSLProxy_RuleAllClear();
+				KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Rule All Clear!\n"));
+			break;
+		case DEVICE_IOCTL_SETRULETYPECLEAR:
 			{
-				PDEVICE_IOCTL_SETPROXYINFO LocalProxyInfo = (PDEVICE_IOCTL_SETPROXYINFO)InputBuffer;
+				UINT32 uiRuleType = OPENSSLPROXY_LISTTYPE_IPPORT;
 
-				if ( InputBuffer == NULL
-					|| InputBufferLength <= sizeof(DEVICE_IOCTL_SETPROXYINFO))
+				OpenSSLProxy_RuleTypeClear(uiRuleType);
+				KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Rule All Clear!\n"));
+			}
+			break;
+		case DEVICE_IOCTL_SETRULEIPPORT:
+			{
+				PDEVICE_IOCTL_RULEINFO  pRuleInfo = (PDEVICE_IOCTL_RULEINFO)InputBuffer;
+
+				if (InputBuffer == NULL
+					|| InputBufferLength != sizeof(DEVICE_IOCTL_RULEINFO))
 				{
 					IoStatus->Status = STATUS_INVALID_PARAMETER;
-					break;
 				}
 				else
 				{
-					KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device set proxy info , Pid=%d, Port=%d!\n", LocalProxyInfo->uiPID, LocalProxyInfo->uiTcpPort));
+					Status = OpenSSLProxy_RuleEntryAdd(pRuleInfo->uiRuleIPAddr, (USHORT)pRuleInfo->uiRulePort);
+					if (STATUS_SUCCESS != Status)
+					{
+						KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device add rule info error! [%d - %d]!\n",
+							pRuleInfo->uiRuleIPAddr, pRuleInfo->uiRulePort));
+					}
+					else
+					{
+						KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device add rule info successful! [%d - %d]!\n",
+							pRuleInfo->uiRuleIPAddr, pRuleInfo->uiRulePort));
+					}
+				}
+			}
+			break;
+		case DEVICE_IOCTL_DELRULEIPPORT:
+			{
+				PDEVICE_IOCTL_RULEINFO  pRuleInfo = (PDEVICE_IOCTL_RULEINFO)InputBuffer;
+
+				if (InputBuffer == NULL
+					|| InputBufferLength != sizeof(DEVICE_IOCTL_RULEINFO))
+				{
+					IoStatus->Status = STATUS_INVALID_PARAMETER;
+				}
+				else
+				{
+					OpenSSLProxy_RuleEntryRemove(pRuleInfo->uiRuleIPAddr, (USHORT)pRuleInfo->uiRulePort);
+					
+					KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device delete rule info successful! [%d - %d]!\n",
+						pRuleInfo->uiRuleIPAddr, pRuleInfo->uiRulePort));
+				}
+			}
+			break;
+		case DEVICE_IOCTL_SETPORTRANGE:
+			{
+				PDEVICE_IOCTL_PORTRANGE_S pPortRange = (PDEVICE_IOCTL_PORTRANGE_S)InputBuffer;
+				if ( InputBuffer == NULL
+					 || InputBufferLength != sizeof(DEVICE_IOCTL_PORTRANGE_S))
+				{
+					IoStatus->Status = STATUS_INVALID_PARAMETER;
+				}
+				else
+				{
+					Status = OpenSSLProxy_SetSrcPortRange(pPortRange->uiLocalPortStart, pPortRange->uiLocalPortEnd);
+					if (STATUS_SUCCESS != Status)
+					{
+						KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device set port range error :[%d - %d]!\n",
+							pPortRange->uiLocalPortStart, pPortRange->uiLocalPortEnd));
+					}
+					else
+					{
+						KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device set port range successful!  range: [%d - %d]!\n",
+							pPortRange->uiLocalPortStart, pPortRange->uiLocalPortEnd));
+					}
+				}
+			}
+			break;
+		case DEVICE_IOCTL_GETPORTRANGE:
+		{
+			PDEVICE_IOCTL_PORTRANGE_S pPortRange = (PDEVICE_IOCTL_PORTRANGE_S)InputBuffer;
+			if (OutputBuffer == NULL || OutputBufferLength < sizeof(DEVICE_IOCTL_PORTRANGE_S))
+			{
+				IoStatus->Status = STATUS_INVALID_PARAMETER;
+				break;
+			}
+			else
+			{
+				Status = OpenSSLProxy_GetSrcPortRange(&pPortRange->uiLocalPortStart, &pPortRange->uiLocalPortEnd);
+				if (STATUS_SUCCESS != Status)
+				{
+					KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device get port range error\n"));
+				}
+				else
+				{
+					KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device get port range successful!  range: [%d - %d]!\n",
+						pPortRange->uiLocalPortStart, pPortRange->uiLocalPortEnd));
+				}
+			}
+		}
+		break;
+		case DEVICE_IOCTL_SETLOCALPROXY:
+			{
+				PDEVICE_IOCTL_SETPROXYINFO pLocalProxyInfo = (PDEVICE_IOCTL_SETPROXYINFO)InputBuffer;
+
+				if ( InputBuffer == NULL
+					|| InputBufferLength != sizeof(DEVICE_IOCTL_SETPROXYINFO))
+				{
+					IoStatus->Status = STATUS_INVALID_PARAMETER;
+				}
+				else
+				{
+					Status = OpenSSLProxy_SetLocalProxyInfo(pLocalProxyInfo->uiPID, (USHORT)pLocalProxyInfo->uiTcpPort);
+					if (STATUS_SUCCESS != Status)
+					{
+						(("[OPENSSLDRV]: #DeviceIoControl#-->Device set proxy Error , Pid=%d, Port=%d!\n", 
+							pLocalProxyInfo->uiPID, pLocalProxyInfo->uiTcpPort));
+					}
+					else
+					{
+						KdPrint(("[OPENSSLDRV]: #DeviceIoControl#-->Device set proxy info successful! Pid=%d, Port=%d!\n",
+							pLocalProxyInfo->uiPID, pLocalProxyInfo->uiTcpPort));
+					}
 				}
 			}
 			break;
 		default:
-			IoStatus->Status = STATUS_INVALID_PARAMETER;
+				IoStatus->Status = STATUS_INVALID_PARAMETER;
 			break;
 	}
 

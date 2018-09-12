@@ -156,15 +156,11 @@ VOID OpenSSLProxy_ConnectionRedirectClassify(
 	localipaddr = ((PSOCKADDR_IN)&(pConnectRequest->localAddressAndPort))->sin_addr.S_un.S_addr;
 	localport = ((PSOCKADDR_IN)&(pConnectRequest->localAddressAndPort))->sin_port;
 
-	/*KdPrint(("[OPENSSLDRV]: #ConnectionRedirectClassify#-->Ale-Connection info:%8x:%d -->%08x:%d ,ProcessID=%d\n",
-		localipaddr, ntohs(localport), remoteipaddr, ntohs(remotePort), ProcessID));
-
-	if (NULL != pstProcInfo )
+	if ( TRUE == OpenSSLProxy_IsPortInRange(localport) )
 	{
-		KdPrint(("[OPENSSLDRV]: #ConnectionRedirectClassify#-->Ale-Connection info:ProcessID=[%d], ProcessName=[len=%d, %s]\n",
-			ProcessID, pstProcInfo->size, pstProcInfo->data));
-	}*/
-	
+		goto Exit;
+	}
+
 	if ( TRUE == OpenSSLProxy_RuleIsMatch(remoteipaddr, remotePort) )
 	{
 		KdPrint(("[OPENSSLDRV]: #ConnectionRedirectClassify#-->Ale Redirect connection Rule is Match! [pto=%d] %08x:%d --> %08x:%d,PID=%d\n",
@@ -181,8 +177,8 @@ VOID OpenSSLProxy_ConnectionRedirectClassify(
 		}
 
 		INETADDR_SET_ADDRESS((PSOCKADDR)&(pConnectRequest->remoteAddressAndPort), (const UCHAR *)OpenSSLProxy_GetLocalSockaddr());
-		//INETADDR_SET_PORT((PSOCKADDR)&(pConnectRequest->remoteAddressAndPort), RegEditGetTcpLocalPort());
-		//pConnectRequest->localRedirectTargetPID = RegEditGetLocalServerPID();
+		INETADDR_SET_PORT((PSOCKADDR)&(pConnectRequest->remoteAddressAndPort), OpenSSLProxy_GetLocalProxyPort());
+		pConnectRequest->localRedirectTargetPID = OpenSSLProxy_GetLocalProxyPID();
 	}
 
 Exit:

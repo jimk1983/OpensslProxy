@@ -28,8 +28,7 @@ HANDLE						gEngineHandle;
 
 
 VOID DriverUnload(
-	IN  PDRIVER_OBJECT driverObject
-)
+	IN  PDRIVER_OBJECT driverObject)
 {
 	PDEVICE_EXTENSION		pDevExt;
 
@@ -127,7 +126,7 @@ NTSTATUS DriverEntry(
 	driverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL]	= DriverControl;
 
 	driverObject->DriverUnload = DriverUnload;
-	KdPrint(("[OPENSSLDRV]: #DriverEntry#-->DriverLoad successful!\n", status));
+	KdPrint(("[OPENSSLDRV]: #DriverEntry#-->DriverLoad successful! Status=%08x\n", status));
 	UNREFERENCED_PARAMETER(registryPath);
 	return status;
 }
