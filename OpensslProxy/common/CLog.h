@@ -13,9 +13,8 @@ extern "C" {
 #define CLOG_LEVEL_STR_WARING	"Warning:"
 #define CLOG_LEVEL_STR_LEN		8			/*字符对齐，前面都空余8个长度*/
 
-
-	/*日志目录名称*/
-#define CLOG_DIRNAME	"CloudScreen\\log\\trasitservice"	
+/*日志目录名称*/
+#define CLOG_DIRNAME	"OpenSSLProxy\\log"	
 
 /*日志长度单条*/
 #define CLOG_BUFLEN		1024

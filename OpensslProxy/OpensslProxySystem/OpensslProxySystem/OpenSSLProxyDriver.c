@@ -26,7 +26,6 @@ BOOLEAN					gConnectionRedirectEnable = FALSE;
 PDEVICE_OBJECT			gDeviceObject;
 HANDLE						gEngineHandle;
 
-
 VOID DriverUnload(
 	IN  PDRIVER_OBJECT driverObject)
 {

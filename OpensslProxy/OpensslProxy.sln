@@ -10,6 +10,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpensslProxySystem", "OpensslProxySystem\OpensslProxySystem\OpensslProxySystem.vcxproj", "{8705C719-F012-485F-97B6-5E933480D2F0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpensslProxyLocal", "OpensslProxyLocal\OpensslProxyLocal.vcxproj", "{93E04704-A340-4C95-BD90-63D6EA07516C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{13016632-EC5E-46E4-9B70-1948B387E8BF} = {13016632-EC5E-46E4-9B70-1948B387E8BF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpensslProxyDrvCtrl", "OpensslProxyDrvCtrl\OpensslProxyDrvCtrl.vcxproj", "{13016632-EC5E-46E4-9B70-1948B387E8BF}"
 EndProject

@@ -39,9 +39,9 @@ const CLOG_FILE_INFO_S stLogInfo[]=
 	{
 		CLOG_TYPE_DEVCTRL,
 		{
-			"#%log_device_ctrl_mutex"
+			"#%log_openssl_localproxy_mutex"
 		},
-		"log_device_ctrl.txt"
+		"log_openssl_localproxy.log"
 	},
 
 };

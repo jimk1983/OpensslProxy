@@ -7,10 +7,10 @@
 
 DeviceIoCtrl *g_pstDevIoCtrl = NULL;
 
-BOOLEAN	OpenSSLProxy_EnvLibInit()
+BOOLEAN	OpenSSLProxy_DrvCtrl_EnvLibInit()
 {
+	/*Lib库不用定义*/
 	(VOID)CLOG_evn_init(CLOG_TYPE_DEVCTRL);
-
 	CrashDumpInitialize();
 
 	if ( NULL == g_pstDevIoCtrl )
@@ -34,7 +34,7 @@ BOOLEAN	OpenSSLProxy_EnvLibInit()
 	return FALSE;
 }
 
-VOID OpenSSLProxy_EnvLibUnInit()
+VOID OpenSSLProxy_DrvCtrl_EnvLibUnInit()
 {
 	if (NULL != g_pstDevIoCtrl)
 	{

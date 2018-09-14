@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-BOOLEAN		OpenSSLProxy_EnvLibInit();
+BOOLEAN		OpenSSLProxy_DrvCtrl_EnvLibInit();
 
-VOID				OpenSSLProxy_EnvLibUnInit();
+VOID				OpenSSLProxy_DrvCtrl_EnvLibUnInit();
 
 BOOLEAN		OpenSSLProxy_DrvCtrl_RuleMatchEnable();
 
