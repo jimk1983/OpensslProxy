@@ -7,7 +7,24 @@
 #include "../common/CLog.h"
 #include "../common/CommDef.h"
 #include "../common/CommBizDefine.h"
-#include "OpensslProxyHandler.h"
+#include "../common/Sem.h"
+#include "../common/Queue.h"
 #include "OpensslProxyWorker.h"
 #include "OpensslProxyPacketDispatch.h"
 #include "OpenSSLProxyMgr.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
