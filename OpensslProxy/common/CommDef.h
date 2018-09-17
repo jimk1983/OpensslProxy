@@ -32,6 +32,9 @@
 /*当前全局的最多创建的线程个数*/
 #define MGR_ARRYNUMS			128
 
+/*建立64位的GUID的唯一连接标识码, 统一根据标识码进行管理*/
+#define MGR_GUIDLEN				64
+
 /***************************内联的链表操作*******************************************/
 #define CONTAINING_RECORD(address, type, field) ((type *)( \
                                         (PCHAR)(address) - \

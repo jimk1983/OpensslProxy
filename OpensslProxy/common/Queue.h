@@ -40,7 +40,7 @@ typedef struct tagSysQueue
 	UINT32								uiFreeNums;				/*空闲队列中的个数，用于检查异常*/
 	NODE_HEAD_S					stUsedList;					/*已经使用的节点，回收用，否则会内存泄漏，使用完还要还回去*/
 	UINT32								uiUsedNums;				/*队列计数*/
-	CRITICAL_SECTION				stCriticalSection;	/*统一锁*/
+	CRITICAL_SECTION				stCriticalSection;			/*统一锁*/
 
 	SYS_SEM_T							hSemNotify;					/*信号量通知*/
 }SYS_QUE_S;
