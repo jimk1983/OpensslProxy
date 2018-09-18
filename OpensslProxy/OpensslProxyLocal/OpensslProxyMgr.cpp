@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <process.h>
 #include "../common/CLog.h"
+#include "../OpensslProxyDrvCtrl/DrvCtrlApi.h"
 #include "../common/CommDef.h"
 #include "../common/CommBizDefine.h"
 #include "../common/Sem.h"
@@ -38,11 +39,11 @@ VOID OpenSSLProxy_SockInit()
 }
 
 
-
 INT32 OpenSSLProxy_MgrInit()
 {
 	OpenSSLProxy_SockInit();
 
+	/*管理器上下文*/
 	g_pstMgrCtx = (PMGR_CTX_S)malloc(sizeof(MGR_CTX_S));
 	if (NULL == g_pstMgrCtx)
 	{
@@ -52,9 +53,14 @@ INT32 OpenSSLProxy_MgrInit()
 
 	ZeroMemory(g_pstMgrCtx, sizeof(MGR_CTX_S));
 
-	g_pstMgrCtx->ulProcessID		= GetCurrentProcessId();
-	g_pstMgrCtx->usListenPort	= MGR_LISTENPORT;
-
+	g_pstMgrCtx->ulProcessID = GetCurrentProcessId();
+	g_pstMgrCtx->usListenPort = MGR_LISTENPORT;
+	
+	if (SYS_ERR == OpenSSLProxy_DrvCtrl_SetLocalProxyInfo((UINT32)g_pstMgrCtx->ulProcessID, (UINT32)g_pstMgrCtx->usListenPort))
+	{
+		CLOG_writelog_level("LPXY", CLOG_LEVEL_ERROR, "Driver Set Local Proxy info Error=%08x!\n", GetLastError());
+		return SYS_ERR;
+	}
 
 	return SYS_OK;
 }

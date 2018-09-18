@@ -8,8 +8,8 @@
 #include <mswsock.h>
 #include <stdio.h>
 #include <process.h>
-#include "../common/CLog.h"
 #include "../OpensslProxyDrvCtrl/DrvCtrlApi.h"
+#include "../common/CLog.h"
 #include "../common/CommDef.h"
 #include "../common/CommBizDefine.h"
 #include "../common/Sem.h"

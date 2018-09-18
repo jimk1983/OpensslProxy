@@ -68,6 +68,12 @@ BOOLEAN OpenSSLProxy_DrvCtrl_RuleMatchDisable()
 }
 
 
+BOOLEAN	OpenSSLProxy_DrvCtrl_SetLocalProxyInfo(UINT32 uiPID, UINT32 uiTcpPort)
+{
+
+	return FALSE;
+}
+
 
 
 
